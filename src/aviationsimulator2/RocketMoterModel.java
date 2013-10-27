@@ -22,6 +22,7 @@ public class RocketMoterModel {
     double mNozzleDiameter;
     double m2NozzleArea;
 
+    int boostPhase = 0;//2 for water boost, 1 for air boost, 0 for no boost
     public RocketMoterModel(double timeStep,double atmInitialPressure,double kgWaterWeight,double lTankSize,double mNozzleDiameter) {
         this.timeStep = timeStep;
         this.atmPressure = this.atmInitialPressue =atmInitialPressure;
@@ -50,8 +51,10 @@ public class RocketMoterModel {
     
     public double getN_CurrentForce(){
         if(0<kgWaterWeight){
+            boostPhase = 2;
             return 2*(m2NozzleArea) * (atmPressure-1.0)*100000;
         }else{
+            boostPhase = 1;
             return 0;
         }
     }
@@ -60,6 +63,9 @@ public class RocketMoterModel {
     }
     public double getKgCurrentWeight(){
         return kgWaterWeight;
+    }
+    public int getBoostPhase(){
+        return boostPhase;
     }
     public void reset(){
         kgWaterWeight = kgInitialWaterWeight;

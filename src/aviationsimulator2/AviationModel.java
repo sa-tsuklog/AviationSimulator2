@@ -88,7 +88,7 @@ public class AviationModel {
         this.secTimeStep = secTimeStep;
         radDirection = -60*Math.PI/180;
         
-        mPos=new Point2D.Double(0,0);
+        mPos=new Point2D.Double(0,0.1);
         mpsSpeed = new Point2D.Double(0,0);
         radpsRotationSpeed = 0;
     }
@@ -106,7 +106,7 @@ public class AviationModel {
         this.radDirection = radDirection;
         controller = new Controller(controllerType);
         
-        mPos = new Point2D.Double(0,0);
+        mPos = new Point2D.Double(0,0.1);
         mpsSpeed = new Point2D.Double(0,0);
         radpsRotationSpeed = 0;
     }
@@ -169,7 +169,7 @@ public class AviationModel {
     }
     private Point2D getEarthFrameForce(){
         double xForce = 0;
-        double yForce = -9.8*kgWeight;
+        double yForce = -9.8*(kgWeight+moter.getKgCurrentWeight());
         
         return new Point2D.Double(xForce,yForce);
     }

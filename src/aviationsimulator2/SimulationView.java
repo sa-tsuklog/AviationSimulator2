@@ -157,7 +157,7 @@ public class SimulationView extends JPanel{
         updateScreenParameter(g);
         
         drawGrid(g,model.getM_Pos());
-        drawPlane(g, model.getM_Pos(), model.getRadDirection(), true);
+        drawPlane(g, model.getM_Pos(), model.getRadDirection(), model.moter.getBoostPhase());
         drawStat(g);
     }
     
@@ -172,7 +172,7 @@ public class SimulationView extends JPanel{
         g.drawString("L/D:\t"+String.format("%.3f", model.getLbyD()), 10, 110);
     }
     
-    private void drawPlane(Graphics g,Point2D mPos,double radDirection,boolean boosting){
+    private void drawPlane(Graphics g,Point2D mPos,double radDirection,int boostPhase){
         if(alwaysDrawPlaneOnCenter){
             Point2D p1,p2;
             mPos = new Point2D.Double(0,0);
@@ -192,8 +192,8 @@ public class SimulationView extends JPanel{
                         (int)(p2.getY()));
             }
 
-            if(boosting){
-
+            if(boostPhase == 2){
+                g.setColor(Color.red);
                 p1 = new Point2D.Double(-0.5,0);
                 p2 = new Point2D.Double(-0.9,0);
                 p1 = mPositionToScreenPosition(g, p1, radDirection, meterPlaneSize, mPos);
@@ -205,8 +205,8 @@ public class SimulationView extends JPanel{
                            (int)(p2.getX()),
                            (int)(p2.getY())
                         );
-                g.setColor(Color.black);
             }
+            g.setColor(Color.black);
         }else{
             Point2D p1,p2;
 
@@ -225,8 +225,8 @@ public class SimulationView extends JPanel{
                         (int)(p2.getY()));
             }
 
-            if(boosting){
-
+            if(boostPhase == 2){
+                g.setColor(Color.red);
                 p1 = new Point2D.Double(-0.5,0);
                 p2 = new Point2D.Double(-0.9,0);
                 p1 = mPositionToScreenPosition(g, p1, radDirection, meterPlaneSize, mPos);
@@ -238,8 +238,8 @@ public class SimulationView extends JPanel{
                            (int)(p2.getX()),
                            (int)(p2.getY())
                         );
-                g.setColor(Color.black);
             }
+            g.setColor(Color.black);
         }
     }
     
