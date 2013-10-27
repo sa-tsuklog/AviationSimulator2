@@ -7,6 +7,8 @@
  *
  * @author sa
  */
+package aviationsimulator2;
+
 public class RocketMoterModel {
     static final double W_RHO = 1000; //kg/m^3
     

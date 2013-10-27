@@ -1,3 +1,4 @@
+package aviationsimulator2;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
  *
  * @author sa
  */
+
 public class SimulationView extends JPanel{
     double[][] planePlot;
     double meterPlaneSize;
@@ -56,6 +58,13 @@ public class SimulationView extends JPanel{
         //repaintTimer = new RepaintTimer(this);
         //repaintTimer.start();
     }
+    public void startSimulation(){
+        this.model = new AviationModel(0.001);
+        if(repaintTimer==null){
+            repaintTimer = new RepaintTimer(this);
+            repaintTimer.start();
+        }
+    }
     public void startSimulation(double kgWeight, double nmInertia, WingModel mainWing, double mMainWingPos, WingModel elevator, double mElevatorPos, double extraDrag, RocketMoterModel moter, double secTimeStep, double radDirection,AviationModel.ControllerType controllerType){
         
         this.model = new AviationModel(kgWeight, nmInertia, mainWing, mMainWingPos, elevator, mElevatorPos, extraDrag, moter, secTimeStep, radDirection, controllerType);
@@ -74,7 +83,6 @@ public class SimulationView extends JPanel{
         SimulationView parent;
         public RepaintTimer(SimulationView parent){
             this.parent = parent;
-            System.out.println(secTimeStep);
         }
         @Override
         public void run(){
@@ -161,9 +169,7 @@ public class SimulationView extends JPanel{
         g.drawString("aoa[deg]:\t"+String.format("%.3f", model.getRadAoa()*180/Math.PI), 10, 65);
         g.drawString("state:\t"+model.controller.getState(), 10, 80);
         g.drawString("pitch:\t"+String.format("%.3f", -model.getRadDirection()*180/Math.PI), 10, 95);
-        if(model.nSpeedFrameForce!=null){
-            g.drawString("L/D:\t"+String.format("%.3f", -model.nSpeedFrameForce.getY()/model.nSpeedFrameForce.getX()), 10, 110);
-        }
+        g.drawString("L/D:\t"+String.format("%.3f", model.getLbyD()), 10, 110);
     }
     
     private void drawPlane(Graphics g,Point2D mPos,double radDirection,boolean boosting){
