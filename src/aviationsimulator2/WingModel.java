@@ -47,6 +47,7 @@ public class WingModel {
         controlDelayRingBuf = new double[msDelay];
         delayPointer=0;
         
+        
         try {
             BufferedReader br = new BufferedReader(new FileReader("clcd/"+filename));
             String line;
