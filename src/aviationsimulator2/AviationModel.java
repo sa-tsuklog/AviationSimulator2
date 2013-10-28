@@ -32,7 +32,8 @@ public class AviationModel {
     
     enum ControllerType{
         NO_CONTROL,
-        SPEED_CONPENSATED_PITCH_BASED,
+        PITCH_BASED,
+        DLC_GROUND_SKIMMING,
     }
     class Controller{
         int state;
@@ -46,7 +47,7 @@ public class AviationModel {
             return state;
         }
         public void update(){
-            if(controllerType == ControllerType.SPEED_CONPENSATED_PITCH_BASED){
+            if(controllerType == ControllerType.PITCH_BASED){
                 double gain=100;
                 double dumperGain = 10;
                 double targetDirection = -Math.PI/64;
@@ -67,7 +68,52 @@ public class AviationModel {
 
                     elevator.setRadOffsetAngle(angle);
                 }
-            }else{
+            }else if(controllerType == ControllerType.DLC_GROUND_SKIMMING){
+                double gain = 100;
+                double dumperGain = 10;
+                
+                double heightGain = 100;
+                double heightDumperGain = 10;
+                double targetHeight = 1;
+                double targetDirection = 0;
+                double radMainWingLimit = 10.0/180*Math.PI;
+                
+                if(state == 0){
+                    mainWing.setEnabled(false);
+                    elevator.setRadOffsetAngle(0);
+                    
+                    if(targetDirection<radDirection){
+                        state = 1;
+                    }
+                }else if(state == 1){
+                    double speed = pointAbs(mpsSpeed);
+                    double angle = -gain/speed/speed *(-0.15+targetDirection-radDirection);
+                    angle += dumperGain/speed/speed * radpsRotationSpeed;
+                    elevator.setRadOffsetAngle(angle);
+                    if(mPos.getY()<targetHeight*2){
+                        state = 2;
+                    }
+                }else{
+                    mainWing.setEnabled(true);
+                    double speed = pointAbs(mpsSpeed);
+
+                    double angle = -gain/speed/speed *(targetDirection-radDirection);
+                    angle += dumperGain/speed/speed * radpsRotationSpeed;
+
+                    double mAngle = heightGain/speed/speed * (targetHeight - mPos.getY());
+                    mAngle -= heightDumperGain/speed/speed * mpsSpeed.getY();
+                    if(mAngle<0){
+                        mAngle=0;
+                    }else if(radMainWingLimit<mAngle){
+                        mAngle=radMainWingLimit;
+                    }
+                    
+                    System.out.println(mAngle*180/Math.PI);
+                    
+                    elevator.setRadOffsetAngle(angle);
+                    mainWing.setRadOffsetAngle(mAngle);
+                }
+            }else{//NO_CONTROL
                 //do nothing.
             }
         }
@@ -77,13 +123,13 @@ public class AviationModel {
     public AviationModel(double secTimeStep) {
         kgWeight = 0.5;
         nmInertia = 0.1;
-        mainWing = new WingModel("clcd/naca4412.txt",0.1, 0);
+        mainWing = new WingModel("naca4412.txt",0.1, 0);
         mMainWingPos = 0.0;
-        elevator = new WingModel("clcd/naca0012.txt", 0.04, 0.0, 10);
+        elevator = new WingModel("naca0012.txt", 0.04, 0.0, 10);
         mElevatorPos = -0.8;
         extraDrag = 0.0056;
         moter = new RocketMoterModel(secTimeStep, 9, 1.5, 4.5, 0.01);
-        controller = new Controller(ControllerType.SPEED_CONPENSATED_PITCH_BASED);
+        controller = new Controller(ControllerType.PITCH_BASED);
         //controller = new Controller(ControllerType.NO_CONTROL);
         this.secTimeStep = secTimeStep;
         radDirection = -60*Math.PI/180;

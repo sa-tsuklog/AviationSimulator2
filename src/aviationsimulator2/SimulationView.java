@@ -40,9 +40,9 @@ public class SimulationView extends JPanel{
     public SimulationView() {
         super();
         
-        meterPlaneSize = 2;
+        meterPlaneSize = 0.6;
         alwaysDrawPlaneOnCenter = true;
-        meterPerGrid = 10;
+        meterPerGrid = 5;
         
         secTimeStep = 0.001;
         repaintDecimation = 10;
@@ -308,7 +308,7 @@ public class SimulationView extends JPanel{
             screenShiftY = screenHeight/2;
         }else{
             screenShiftX = screenWidth*9/10;
-            screenShiftY = screenHeight*1/10;
+            screenShiftY = screenHeight*9/10;
         }
     }
     

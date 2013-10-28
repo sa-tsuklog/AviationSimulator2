@@ -48,7 +48,7 @@ public class WingModel {
         delayPointer=0;
         
         try {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
+            BufferedReader br = new BufferedReader(new FileReader("clcd/"+filename));
             String line;
             for (int i = 0; i < 5; i++) {
                 br.readLine();

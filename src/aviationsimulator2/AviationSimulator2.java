@@ -4,6 +4,9 @@
  */
 package aviationsimulator2;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  *
  * @author sa
@@ -133,9 +136,6 @@ public class AviationSimulator2 extends javax.swing.JFrame {
 
         mainWingTypeLabel.setText("WingType");
 
-        mainWingTypeCombobox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "clcd/naca0012.txt", "clcd/naca4412.txt", "clcd/FX60-100.txt", " " }));
-        mainWingTypeCombobox.setSelectedIndex(1);
-
         jLabel8.setText("WingSize[m^2]");
 
         mainWingSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(0.1d), null, null, Double.valueOf(0.01d)));
@@ -147,8 +147,6 @@ public class AviationSimulator2 extends javax.swing.JFrame {
         jLabel10.setText("Elevator");
 
         jLabel11.setText("WingType");
-
-        elevatorTypeCombobox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "clcd/naca0012.txt", "clcd/naca4412.txt", "clcd/FX60-100.txt", " " }));
 
         jLabel12.setText("WingSize[m^2]");
 
@@ -184,8 +182,7 @@ public class AviationSimulator2 extends javax.swing.JFrame {
 
         jLabel21.setText("Type");
 
-        controllerTypeCombobox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NO CONTROL", "PITCH BASED", " " }));
-        controllerTypeCombobox.setSelectedIndex(1);
+        controllerTypeCombobox.setToolTipText("");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -357,6 +354,8 @@ public class AviationSimulator2 extends javax.swing.JFrame {
         );
 
         jScrollPane1.setViewportView(jPanel2);
+        readWingTypeList();
+        readControlTypeList();
 
         simulationView.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -394,6 +393,33 @@ public class AviationSimulator2 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void readWingTypeList(){
+        File file = new File("clcd");
+        
+        String[] wingtypeFileNames = file.list();
+        for (int i = 0; i < wingtypeFileNames.length; i++) {
+            if( (new File("clcd/"+wingtypeFileNames[i])).isFile() ){
+                mainWingTypeCombobox.addItem(wingtypeFileNames[i]);
+                elevatorTypeCombobox.addItem(wingtypeFileNames[i]);
+                
+                if(wingtypeFileNames[i].matches("FX60-100.txt")){
+                    mainWingTypeCombobox.setSelectedItem(wingtypeFileNames[i]);
+                }
+                if(wingtypeFileNames[i].matches("naca0012.txt")){
+                    elevatorTypeCombobox.setSelectedItem(wingtypeFileNames[i]);
+                }
+            }
+        }
+    }
+    
+    private void readControlTypeList(){
+        AviationModel.ControllerType[]  controllerTypesList = AviationModel.ControllerType.values();
+        for (int i = 0; i < controllerTypesList.length; i++) {
+            controllerTypeCombobox.addItem(controllerTypesList[i]);
+        }
+        controllerTypeCombobox.setSelectedItem(AviationModel.ControllerType.PITCH_BASED);
+    }
+    
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         // TODO add your handling code here:
         double secTimeStep = 0.001;
@@ -408,11 +434,7 @@ public class AviationSimulator2 extends javax.swing.JFrame {
         RocketMoterModel moter = new RocketMoterModel(secTimeStep, (double)pressuredragSpinner.getValue(), (double)waterWeightdragSpinner.getValue(), (double)tankSizedragSpinner.getValue(), ((double)nozzleSpinner.getValue())/1000);
         double radDirection = (-(double)directionSpinner.getValue())*Math.PI/180;
         AviationModel.ControllerType controllerType;
-        if(((String)controllerTypeCombobox.getSelectedItem()).matches("PITCH BASED")){
-            controllerType = AviationModel.ControllerType.SPEED_CONPENSATED_PITCH_BASED;
-        }else{
-            controllerType = AviationModel.ControllerType.NO_CONTROL;
-        }
+        controllerType = (AviationModel.ControllerType)controllerTypeCombobox.getSelectedItem();
         
         ((SimulationView)simulationView).startSimulation(kgWeight, nmInertia, mainWing, mMainWingPos, elevator, mElevatorPos, extraDrag, moter, secTimeStep, radDirection, controllerType);
         //((SimulationView)simulationView).startSimulation();
