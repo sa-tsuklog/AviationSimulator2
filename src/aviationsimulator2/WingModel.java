@@ -63,8 +63,12 @@ public class WingModel {
             }
             
             br.close();
-        } catch (IOException iOException) {
-            iOException.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            for (int i = 0; i < cl.length; i++) {
+                cl[i] = 0.0;
+                cd[i] = 0.0;
+            }
         }
     }
     
