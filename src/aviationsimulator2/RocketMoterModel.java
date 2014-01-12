@@ -55,7 +55,7 @@ public class RocketMoterModel {
             return 2*(m2NozzleArea) * (atmPressure-1.0)*100000;
         }else{
             boostPhase = 1;
-            return 0;
+            return 0.50;
         }
     }
     public double getAtmCurrentPressure(){
